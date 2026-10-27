@@ -149,6 +149,34 @@
   }
 }
 
+/* Header shrinks once the dark "Selected work" section reaches it.
+   --header-h stays constant for layout; only the bar itself animates. */
+.site-header {
+  height: var(--header-h);
+  transition: height 0.6s cubic-bezier(0.2, 0.7, 0, 1);
+}
+.site-header[data-compact] {
+  height: 3.5rem;
+}
+@media (min-width: 768px) {
+  .site-header[data-compact] {
+    height: 4.25rem;
+  }
+}
+.header-fade {
+  transition:
+    opacity 0.35s ease,
+    transform 0.5s cubic-bezier(0.2, 0.7, 0, 1);
+}
+.site-header[data-compact] .header-fade {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  pointer-events: none;
+}
+.header-pad {
+  transition: padding 0.6s cubic-bezier(0.2, 0.7, 0, 1);
+}
+
 .dark {
   --paper: #0e0e0f;
   --ink: #f2f2ef;
@@ -226,11 +254,7 @@ html[data-intro="done"] .fade-in {
 
 /* Loader overlay fades to reveal the page */
 .intro-overlay {
-  transition: opacity 0.75s ease;
-}
-html[data-intro-mode="quick"] .intro-overlay,
-html[data-intro-mode="none"] .intro-overlay {
-  display: none;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 html[data-intro="done"] .intro-overlay {
   opacity: 0;

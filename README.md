@@ -22,10 +22,14 @@ npm run dev
 
 ### Tweaking the ribbon
 
-It's ~70 outlines of one square, each rotated a little further in 3D than the
-last. The look is controlled by the "Shape parameters" block in
-`ribbon-canvas.tsx`: `n` (line count), `twist`, `rx0/rx1/ry0/ry1` (tilt at
-each end of the fan), `globalAlpha` (line darkness) and `base` (size).
+It's one square drawn ~64 times, each copy rotated a bit further around a
+single 3D axis, so the copies trace a swept sheet. Both the square's
+orientation and that axis wander slowly over time (`pose()` in
+`ribbon-canvas.tsx`), which is what makes it morph between a curled page, a
+fan of pages and a petal. The cursor tilts it slightly and moving the cursor
+speeds up the morph. Knobs: `n` (line count), `sweep` (how far the copies
+fan), the `tilt` range (petal ↔ page-sweep), `globalAlpha` (line darkness),
+`base` (size).
 
 ### Project screenshots
 
@@ -34,6 +38,13 @@ that project in `lib/site.ts`. Without one, a generated cover is shown.
 
 ### Intro
 
-The black loader plays once per browser session. Clear session storage (or
-open a new tab) to see it again. Users with reduced motion get a static page.
-Press `d` to toggle dark mode.
+The black loader plays on every page load and stays up for at least ~1.9s
+(and until fonts are ready), however fast the page loads. With reduced
+motion it shows a still mark instead of the animation. Press `d` to toggle
+dark mode.
+
+### Header
+
+The header is fixed. Once the dark "Selected work" section reaches it, it
+shrinks and the "Projects" / "Say hello" links fade out; scrolling back up
+restores it.

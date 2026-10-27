@@ -13,7 +13,7 @@ export default function Home() {
       <SmoothScroll />
       <RibbonCanvas mode="hero" />
       <SiteHeader />
-      <main className="relative">
+      <main className="relative pt-[var(--header-h)]">
         <Hero />
         <Statement />
         <WorkSection />
