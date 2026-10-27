@@ -23,6 +23,7 @@ const external = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
+  const compact = useCompact()
   const panel = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -41,17 +42,20 @@ export function SiteHeader() {
   }, [open])
 
   return (
-    <header className="sticky top-0 z-40 h-[var(--header-h)] border-b border-line bg-paper text-ink">
+    <header
+      data-compact={compact || undefined}
+      className="site-header group/header fixed inset-x-0 top-0 z-40 border-b border-line bg-paper text-ink"
+    >
       <div className="flex h-full">
         {/* Mark + name + tagline */}
         <a
           href="#top"
-          className="flex shrink-0 items-start gap-3 px-4 pt-4 md:w-[9.5%] md:px-6 md:pt-5"
+          className="header-pad flex shrink-0 items-start gap-3 px-4 pt-4 group-data-[compact]/header:pt-2.5 md:w-[9.5%] md:px-6 md:pt-5 md:group-data-[compact]/header:pt-3"
           aria-label={`${site.name}, home`}
         >
           <WireLogo className="size-9 text-ink md:size-10" />
         </a>
-        <div className="flex flex-1 items-start pt-4 md:pt-5">
+        <div className="header-pad flex flex-1 items-start pt-4 group-data-[compact]/header:pt-2.5 md:pt-5 md:group-data-[compact]/header:pt-3">
           <p className="w-40 text-[0.95rem] leading-[1.05] tracking-tight md:w-[19%] md:text-lg">
             {site.nameLines.map((l, i) => (
               <Reveal key={l} delay={80 + i * 70} className="block">
@@ -69,8 +73,12 @@ export function SiteHeader() {
         </div>
 
         {/* Projects / About */}
-        <div className="hidden w-[24.6%] flex-col justify-between border-l border-line px-5 pt-5 pb-4 md:flex">
-          <a href="#work" className="group flex gap-5 text-sm">
+        <div className="relative hidden w-[24.6%] flex-col justify-end border-l border-line px-5 pb-4 md:flex">
+          <a
+            href="#work"
+            tabIndex={compact ? -1 : 0}
+            className="header-fade group absolute top-5 left-5 flex gap-5 text-sm"
+          >
             <span className="tabular-nums">
               {String(projects.length).padStart(4, "0")}
             </span>
@@ -90,13 +98,14 @@ export function SiteHeader() {
         <div ref={panel} className="relative w-auto md:w-[20%]">
           <div
             className={cn(
-              "flex h-full flex-col justify-between px-4 pt-4 pb-3 transition-colors md:border-l md:border-line md:px-5 md:pt-5 md:pb-4",
+              "relative flex h-full flex-col justify-end px-4 pb-3 transition-colors md:border-l md:border-line md:px-5 md:pb-4",
               open && "bg-panel"
             )}
           >
             <a
               href={`mailto:${site.email}`}
-              className="hidden text-sm hover:underline md:block"
+              tabIndex={compact ? -1 : 0}
+              className="header-fade absolute top-5 left-5 hidden text-sm hover:underline md:block"
             >
               Say hello
             </a>
@@ -160,12 +169,48 @@ export function SiteHeader() {
           </nav>
         </div>
 
-        <div className="hidden w-[7%] items-start justify-end px-5 pt-5 text-xs xl:flex">
+        <div className="header-pad hidden w-[7%] items-start justify-end px-5 pt-5 text-xs group-data-[compact]/header:pt-3 xl:flex">
           <LocalTime />
         </div>
       </div>
     </header>
   )
+}
+
+/**
+ * True once the dark "Selected work" section has scrolled up to the header,
+ * false again when you scroll back above it.
+ */
+function useCompact() {
+  const [compact, setCompact] = useState(false)
+  useEffect(() => {
+    const work = document.getElementById("work")
+    if (!work) return
+    let raf = 0
+    const check = () => {
+      raf = 0
+      const full = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue(
+          "--header-h"
+        )
+      )
+      const px =
+        full * parseFloat(getComputedStyle(document.documentElement).fontSize)
+      setCompact(work.getBoundingClientRect().top <= px + 1)
+    }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check)
+    }
+    check()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    }
+  }, [])
+  return compact
 }
 
 function LocalTime() {

@@ -5,7 +5,7 @@ export const site = {
   name: "Vasumitra Gajbhiye",
   nameLines: ["Vasumitra", "Gajbhiye"],
   tagline: ["Building the tools", "I wished I had."],
-  email: "vasumitragajbhiye20@gmail.com",
+  email: "hello@vasumitragajbhiye.com",
   location: "Nagpur · Bengaluru",
   timeZone: "Asia/Kolkata",
   links: {
@@ -17,7 +17,7 @@ export const site = {
   ctas: {
     primary: {
       label: "Work with me",
-      href: "mailto:vasumitragajbhiye20@gmail.com",
+      href: "mailto:hello@vasumitragajbhiye.com",
     },
     secondary: { label: "About me", href: "#about" },
   },
