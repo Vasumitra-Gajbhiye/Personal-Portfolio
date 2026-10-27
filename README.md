@@ -1,6 +1,6 @@
 # vasumitragajbhiye.com
 
-Next.js 16 · Tailwind 4 · shadcn/ui · Lenis
+Next.js 16 · Tailwind css 4 · shadcn/ui · Lenis
 
 ```bash
 npm install
