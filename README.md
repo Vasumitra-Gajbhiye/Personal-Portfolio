@@ -14,7 +14,8 @@ npm run dev
 | All copy, links and projects | `lib/site.ts` |
 | Line-ribbon (hero + dark section) | `components/home/ribbon-canvas.tsx` |
 | Intro loader (black screen, wireframe mark) | `components/home/intro-loader.tsx` |
-| Header + menu + rotating mark | `components/home/site-header.tsx`, `wire-logo.tsx` |
+| Header + menu + animated cube mark | `components/home/site-header.tsx`, `wire-logo.tsx` |
+| Cube mark animation (loader + logo) | `lib/cube.ts` |
 | Hero, CTA tiles, project card | `components/home/hero.tsx`, `project-card.tsx` |
 | Pinned "Who I am" statement | `components/home/statement.tsx` |
 | Dark work / contact / footer | `components/home/work-section.tsx` |
@@ -36,12 +37,22 @@ fan), the `tilt` range (petal ↔ page-sweep), `globalAlpha` (line darkness),
 Drop an image in `public/projects/` and set `image: "/projects/name.png"` on
 that project in `lib/site.ts`. Without one, a generated cover is shown.
 
-### Intro
+### Intro and the cube mark
 
-The black loader plays on every page load and stays up for at least ~1.9s
-(and until fonts are ready), however fast the page loads. With reduced
-motion it shows a still mark instead of the animation. Press `d` to toggle
-dark mode.
+The mark is a "2.5D" wireframe cube: two identical squares, each with its own
+position, rotation and squash, plus four lines joining their corners. One
+timeline in `lib/cube.ts` drives both:
+
+- **Loader** (black screen, every page load): corner brackets and depth lines
+  draw in → the cube snaps whole → stepped tumble → rest → the screen fades.
+  It always runs to the end (~3.3s) and waits for fonts. With reduced motion it
+  shows the cube still.
+- **Header logo**: the same cube, looping rest → flat square → extrude →
+  tumble → rest (~10s). It starts when the loader finishes, so it picks up
+  where the loader's cube came to rest.
+
+`REST` is the resting arrangement; `TUMBLE_KEYS` are the tumble keyframes.
+Press `d` to toggle dark mode.
 
 ### Header
 

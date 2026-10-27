@@ -53,7 +53,7 @@ export function SiteHeader() {
           className="header-pad flex shrink-0 items-start gap-3 px-4 pt-4 group-data-[compact]/header:pt-2.5 md:w-[9.5%] md:px-6 md:pt-5 md:group-data-[compact]/header:pt-3"
           aria-label={`${site.name}, home`}
         >
-          <WireLogo className="size-9 text-ink md:size-10" />
+          <WireLogo className="-mt-1 size-10 text-ink md:-mt-1.5 md:size-12" />
         </a>
         <div className="header-pad flex flex-1 items-start pt-4 group-data-[compact]/header:pt-2.5 md:pt-5 md:group-data-[compact]/header:pt-3">
           <p className="w-40 text-[0.95rem] leading-[1.05] tracking-tight md:w-[19%] md:text-lg">

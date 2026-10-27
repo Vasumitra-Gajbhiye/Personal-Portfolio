@@ -2,18 +2,20 @@
 
 import { useEffect, useRef, useState } from "react"
 
+import { drawCube, LOADER_REST_AT, loaderFrame, restFrame } from "@/lib/cube"
 import { finishIntro, introMode } from "@/lib/intro"
-import { clamp, drawMark, easeInOutCubic, fitCanvas } from "@/lib/wire"
+import { fitCanvas } from "@/lib/wire"
 
 /**
- * Black screen, the wireframe mark draws itself in and turns, then the
- * screen fades to reveal the page. Plays on every page load and always runs
- * for at least MIN_SHOW ms, even when the page is already loaded. It also
- * waits for fonts so the reveal never happens half-styled.
+ * Black screen: the wireframe cube draws itself in (corner brackets + depth
+ * lines), snaps whole, tumbles and comes to rest, then the screen fades to
+ * reveal the page. Plays on every page load and always runs to the end, even
+ * when the page is already loaded. It also waits for fonts so the reveal
+ * never happens half-styled.
  */
-const DRAW = 1100 // edges drawing in
-const MIN_SHOW = 1900 // earliest moment the page can reveal
-const MAX_WAIT = 4500 // reveal anyway if fonts hang
+const MIN_SHOW = LOADER_REST_AT * 1000 + 150 // cube settles, brief beat
+const STILL_SHOW = 1400 // reduced motion: still cube on black
+const MAX_WAIT = 6000 // reveal anyway if fonts hang
 const FADE = 800 // overlay fade-out (matches CSS)
 
 export function IntroLoader() {
@@ -28,12 +30,12 @@ export function IntroLoader() {
       return
     }
     const still = introMode() === "reduced"
+    const minShow = still ? STILL_SHOW : MIN_SHOW
     const start = performance.now()
     let raf = 0
     let revealAt = -1
-    let fontsReady = false
+    let fontsReady = !document.fonts
     document.fonts?.ready.then(() => (fontsReady = true))
-    if (!document.fonts) fontsReady = true
     document.documentElement.style.overflow = "hidden"
 
     const frame = (now: number) => {
@@ -43,22 +45,20 @@ export function IntroLoader() {
       g.setTransform(dpr, 0, 0, dpr, 0, 0)
       g.clearRect(0, 0, W, H)
 
-      const spin = still ? 0.6 : t / 1000
-      g.strokeStyle = "rgba(255,255,255,0.95)"
-      g.lineWidth = 1.25
-      g.lineJoin = "round"
-      drawMark(
-        g,
-        W / 2,
-        H / 2,
-        Math.max(18, Math.min(W, H) * 0.035),
-        0.5 + spin * 0.9,
-        spin * 1.6,
-        0.25 + spin * 0.4,
-        still ? 1 : easeInOutCubic(clamp(t / DRAW))
-      )
+      const side = Math.min(64, Math.max(40, Math.min(W, H) * 0.058))
+      const f = still ? restFrame : loaderFrame(t / 1000)
+      // Like the reference, the cube drops out as soon as the screen
+      // starts fading, so only the ribbon's square shows through the grey.
+      const cubeAlpha = revealAt < 0 ? 1 : 1 - Math.min(1, (t - revealAt) / 120)
+      if (f && cubeAlpha > 0) {
+        g.globalAlpha = cubeAlpha
+        g.strokeStyle = "#fff"
+        g.lineWidth = Math.max(2, side * 0.048)
+        drawCube(g, W / 2, H / 2, side, f)
+        g.globalAlpha = 1
+      }
 
-      if (revealAt < 0 && t >= MIN_SHOW && (fontsReady || t >= MAX_WAIT)) {
+      if (revealAt < 0 && t >= minShow && (fontsReady || t >= MAX_WAIT)) {
         revealAt = t
         document.documentElement.style.overflow = ""
         finishIntro()
