@@ -5,7 +5,7 @@ export const site = {
   name: "Vasumitra Gajbhiye",
   nameLines: ["Vasumitra", "Gajbhiye"],
   tagline: ["Building the tools", "I wished I had."],
-  email: "hello@vasumitragajbhiye.com",
+  email: "vasumitragajbhiye20@gmail.com",
   location: "Nagpur · Bengaluru",
   timeZone: "Asia/Kolkata",
   links: {
@@ -13,11 +13,11 @@ export const site = {
     linkedin: "https://linkedin.com/in/vasumitragajbhiye",
   },
   // Each entry is one line of the giant hero headline.
-  headline: ["I build", "the tools", "I wished", "I had."],
+  headline: ["I build", "tools", "I wish", "I had."],
   ctas: {
     primary: {
       label: "Work with me",
-      href: "mailto:hello@vasumitragajbhiye.com",
+      href: "mailto:vasumitragajbhiye20@gmail.com",
     },
     secondary: { label: "About me", href: "#about" },
   },

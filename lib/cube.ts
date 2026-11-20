@@ -5,13 +5,9 @@
 // corner i of A to corner i of B. Moving the two squares independently fakes
 // the cube turning in 3D.
 //
-// One timeline drives both the black intro loader and the header logo:
-//
-//   loader  brackets + depth lines draw in → snap to a near-front cube →
-//           stepped tumble → settles at rest
-//   logo    rest (long hold) → both squares swing together into one flat
-//           square → depth grows back (near-front cube) → the same tumble →
-//           rest … repeat
+// The header logo loops: rest (long hold) → both squares swing together
+// into one flat square → depth grows back (near-front cube) → stepped
+// tumble → rest … repeat
 
 /** One square's placement. Units are the square's side length. */
 type Sq = {
@@ -97,39 +93,7 @@ function tumble(t: number): Pose {
   return REST
 }
 
-export type CubeFrame = {
-  pose: Pose
-  /** Loader draw-in stage; null once the cube is whole. */
-  drawIn: null | { second: boolean; lines: number }
-}
-
-// ---------------------------------------------------------------------------
-// Loader timeline (seconds from when the black screen appears)
-
-const L_BLACK = 0.34 // empty black before anything draws
-const L_SECOND = 0.07 // second bracket appears
-const L_LINES = 0.2 // depth lines finish growing
-const L_SNAP = 0.5 // whole cube snaps in
-const L_HOLD = 0.18 // near-front cube holds before tumbling
-/** When the loader's cube comes to rest (seconds). */
-export const LOADER_REST_AT = L_BLACK + L_SNAP + L_HOLD + TUMBLE
-
-export function loaderFrame(t: number): CubeFrame | null {
-  const u = t - L_BLACK
-  if (u < 0) return null
-  if (u < L_SNAP) {
-    return {
-      pose: FRONT,
-      drawIn: {
-        second: u >= L_SECOND,
-        lines: easeOut(clamp01((u - 0.02) / (L_LINES - 0.02))),
-      },
-    }
-  }
-  const v = u - L_SNAP
-  if (v < L_HOLD) return { pose: FRONT, drawIn: null }
-  return { pose: tumble(v - L_HOLD), drawIn: null }
-}
+export type CubeFrame = { pose: Pose }
 
 // ---------------------------------------------------------------------------
 // Header logo loop (seconds since it started; starts at rest)
@@ -144,22 +108,21 @@ export const LOGO_PERIOD =
 
 export function logoFrame(time: number): CubeFrame {
   let t = time % LOGO_PERIOD
-  if (t < G_REST) return { pose: REST, drawIn: null }
+  if (t < G_REST) return { pose: REST }
   t -= G_REST
-  if (t < G_SWING)
-    return { pose: lerpPose(REST, FLAT, easeInOut(t / G_SWING)), drawIn: null }
+  if (t < G_SWING) return { pose: lerpPose(REST, FLAT, easeInOut(t / G_SWING)) }
   t -= G_SWING
-  if (t < G_SQUARE) return { pose: FLAT, drawIn: null }
+  if (t < G_SQUARE) return { pose: FLAT }
   t -= G_SQUARE
   if (t < G_EXTRUDE)
-    return { pose: lerpPose(FLAT, FRONT, easeOut(t / G_EXTRUDE)), drawIn: null }
+    return { pose: lerpPose(FLAT, FRONT, easeOut(t / G_EXTRUDE)) }
   t -= G_EXTRUDE
-  if (t < G_FRONT) return { pose: FRONT, drawIn: null }
+  if (t < G_FRONT) return { pose: FRONT }
   t -= G_FRONT
-  return { pose: tumble(t), drawIn: null }
+  return { pose: tumble(t) }
 }
 
-export const restFrame: CubeFrame = { pose: REST, drawIn: null }
+export const restFrame: CubeFrame = { pose: REST }
 
 // ---------------------------------------------------------------------------
 // Drawing
@@ -198,34 +161,6 @@ export function drawCube(
   g.lineJoin = "miter"
   g.lineCap = "butt"
   g.beginPath()
-
-  if (f.drawIn) {
-    // Corner brackets at the front square's top-left corner (arms reach out
-    // left and up), then the four depth lines growing from A towards B.
-    // The second bracket sits just up-right of the first: a doubled line.
-    const arm = side * 0.55
-    const [ax, ay] = A[0]
-    const off = side * 0.08
-    for (const [x, y] of f.drawIn.second
-      ? [
-          [ax, ay],
-          [ax + off, ay - off],
-        ]
-      : [[ax, ay]]) {
-      g.moveTo(x - arm, y)
-      g.lineTo(x, y)
-      g.lineTo(x, y - arm * 0.85)
-    }
-    const e = Math.max(0.04, f.drawIn.lines)
-    for (let i = 0; i < 4; i++) {
-      const [x1, y1] = A[i]
-      const [x2, y2] = B[i]
-      g.moveTo(x1, y1)
-      g.lineTo(x1 + (x2 - x1) * e, y1 + (y2 - y1) * e)
-    }
-    g.stroke()
-    return
-  }
 
   for (const P of [B, A]) {
     P.forEach(([x, y], k) => (k ? g.lineTo(x, y) : g.moveTo(x, y)))

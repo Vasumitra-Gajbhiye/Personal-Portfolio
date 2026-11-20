@@ -252,15 +252,6 @@ html[data-intro="done"] .fade-in {
   transform: none;
 }
 
-/* Loader overlay fades to reveal the page */
-.intro-overlay {
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-html[data-intro="done"] .intro-overlay {
-  opacity: 0;
-  pointer-events: none;
-}
-
 /* Word-by-word reveal on scroll */
 .word-reveal .word {
   display: inline-block;

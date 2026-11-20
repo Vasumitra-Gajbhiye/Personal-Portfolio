@@ -7,10 +7,8 @@ import { onIntroReveal } from "@/lib/intro"
 import { fitCanvas, prefersReducedMotion } from "@/lib/wire"
 
 /**
- * The header mark: the same wireframe cube as the intro loader, looping the
- * same animation (rest → flat square → extrude → tumble → rest). The loop
- * starts when the page is revealed, so it picks up exactly where the
- * loader's cube came to rest.
+ * The header mark: a wireframe cube looping rest → flat square → extrude →
+ * tumble → rest. The loop starts when the page is revealed.
  */
 export function WireLogo({ className }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null)

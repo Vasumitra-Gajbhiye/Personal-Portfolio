@@ -5,16 +5,15 @@ import { GeistSans } from "geist/font/sans"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { introBootScript } from "@/lib/intro"
-import { site } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vasumitragajbhiye.com"),
-  title: `${site.name}: developer & founder`,
+  title: "I build tools I wish I had",
   description:
     "Full-stack developer, founder of BrillPrep and community lead of r/alevel. Data science at IIM Bangalore.",
   openGraph: {
-    title: site.name,
+    title: "I build tools I wish I had",
     description: "Building the tools I wished I had.",
     url: "https://vasumitragajbhiye.com",
     type: "website",
@@ -46,7 +45,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: introBootScript }} />
         <noscript>
-          <style>{`.intro-overlay{display:none!important}.reveal-inner,.fade-in,.word>span{transform:none!important;opacity:1!important}`}</style>
+          <style>{`.reveal-inner,.fade-in,.word>span{transform:none!important;opacity:1!important}`}</style>
         </noscript>
       </head>
       <body>
